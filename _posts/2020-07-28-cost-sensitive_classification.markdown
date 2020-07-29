@@ -1,0 +1,28 @@
+---
+layout: post
+title:      "Cost-Sensitive Classification"
+date:       2020-07-29 00:33:22 +0000
+permalink:  cost-sensitive_classification
+---
+
+A series aimed at practically addressing common pain points in the data science lifecycle.
+Once a model is developed and ready for use in production there are important decisions to be made regarding exactly how the predictions should be used. Some of the main decisions center around the business value and risk of the model's performance. Broadly speaking, value lies in correct predictions and risk lies in incorrect predictions. However, using evaluation metrics to assess the cost vs benefits of a solution is sometimes as much an art as it is a science. 
+
+## Confusion Matrix: Interpretation
+The confusion matrix (CM) is an intuitive  tool for measuring classifier performance. When properly interpreted and used, I find it is also one of the best visuals for communicating to business leaders and decision makers the real-world implications of model performance. In application, CM metrics are most useful when attention is paid to the underlying question being asked in each case.
+Confusion Matrix MetricsSensitivity - also referred to as Recall, essentially asks: How accurately can the algorithm identify all relevant cases? This is the True Positive Rate (TPR) of the classifier, and identifies the hit rate. 
+Precision, on the other hand, asks: Of the relevant cases identified, how many errors were made? (i.e., how precise are my predictions). This is the positive predictive value of the classifier.
+To illustrate these concepts with an example, consider the following situation: A classifier has to identify pregnant vs non-pregnant patients. 
+The classifier correctly identifies 90% of patients who are pregnant (recall is 0.9); however, it does so with poor precision, as nearly half of all positive predictions are false positives. 
+The high false positive rate is also reflected by a low specificity score. Specificity asks: What percentage of negative labels were correctly identified as negative? This is why specificity is also known as the True Negative Rate (TNR). 
+Accuracy
+Accuracy is spoken about quite loosely and is often used interchangeably with the general performance of a model. When the classes being predicted are balanced, accuracy is a good metric to use. In the above example accuracy was 0.64, which correctly captures the tradeoff between high recall and low precision in the model (and also low specificity and high negative predictive value). However, consider the scenario below:
+Two main observations: 1) There are many more not pregnant than pregnant cases, and 2) while almost none of the pregnant cases are correctly identified, the classifier achieves an accuracy score of 0.92, or 92%. When the classes are significantly imbalanced, all the classifier has to do to achieve high accuracy is identify everything as the dominant class. This of course makes the model useless, as it is typically the minority class that we are interested in identifying (in this case, who is actually pregnant).
+Similarly, a classifier can achieve high sensitivity by classifying all examples as positive or high specificity by classifying all examples as negative. For example, if your doctor told every patient that they were pregnant, they would correctly classify all pregnant patients. However, this very high sensitivity would come at the cost of misclassifying all non-pregnant patients as pregnant (therefore, very low specificity). As such, specificity and sensitivity alone are not enough to evaluate performance. The False Positive Rate (1 ₋ Specificity) and the False Negative Rate (1 ₋ Sensitivity) also have to be considered, as these metrics are informative of how many negative examples were falsely classified as positive and how many positive examples were falsely classified as negative, respectively. 
+Determining the Best Metric
+Any of the metrics above can be used to evaluate model performance. However, there are a few compound measures that have been designed specifically to weigh multiple performance characteristics of an algorithm. All measures are bounded between 0 and 1. 
+***Metrics for binary. When multiclass, collection of binary comparisons. For imbalanced data - best. For multiclass - best. 
+F1 Score: The harmonic mean of precision and recall. The harmonic mean is less sensitive to high values, and as such is reliable when recall and precision differ more drastically. For instance, in our first pregnancy example the F1 score is 0.69. This reflects the lower precision of the model, despite very high sensitivity/recall. This measure is suitable for imbalanced classes.
+FBeta: Similar to the F1 score, except you can choose to add more importance to either precision or to recall (instead of weighing them both equally). This allows flexibility when business goals align with a model that is either more sensitive to identifying relevant cases or more precise in identifying relevant cases without error. 
+AUC (Area Under the ROC Curve): This metric captures the tradeoff between the True Positive Rate (sensitivity) and the False Positive Rate (1 ₋ specificity). The closer to 1, the better the model is at separating the classes without error. Note that this metric is more intuitive, and perhaps suited to, binary (two label) classification than multiclass classification. 
+The metric you choose for evaluating performance must be sensitive to the underlying class distribution and the cost of a misclassification/ the value of a correct classification (i.e., the business goal/ problem inherent to the model's predictions).
